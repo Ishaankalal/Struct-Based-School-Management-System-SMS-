@@ -1,0 +1,215 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Student struct definition
+typedef struct student {
+    char name[20];
+    int id;
+    int grade;
+} student;
+
+// Course struct definition
+typedef struct cource {
+    char name[20];
+    float average_grade;
+    int total_student;
+    student *studentArr; // Dynamic array of students
+} cource;
+
+// School struct definition
+typedef struct school {
+    char name[20];
+    int total_cource;
+    cource *cource_array; // Dynamic array of courses
+} school;
+
+// Function to create a new student
+student *create_student() {
+    // Allocate memory for a student
+    student *new_student = (student *)malloc(sizeof(student));
+    if (!new_student) {
+        printf("Memory allocation failed for student!\n");
+        return NULL;
+    }
+
+    // Input student details
+    printf("Enter the name of the student: ");
+    scanf("%s", new_student->name);
+
+    printf("Enter the ID of the student: ");
+    scanf("%d", &new_student->id);
+
+    printf("Enter the grade of the student: ");
+    scanf("%d", &new_student->grade);
+
+    return new_student;
+}
+
+// Function to create a new course
+cource *create_cource() {
+    // Allocate memory for a course
+    cource *new_cource = (cource *)malloc(sizeof(cource));
+    if (!new_cource) {
+        printf("Memory allocation failed for course!\n");
+        return NULL;
+    }
+
+    // Input course details
+    printf("Enter the course name: ");
+    scanf("%s", new_cource->name);
+
+    printf("Enter the number of students in this course: ");
+    scanf("%d", &new_cource->total_student);
+
+    // Allocate memory for student array
+    new_cource->studentArr = (student *)malloc(sizeof(student) * new_cource->total_student);
+    if (!new_cource->studentArr) {
+        printf("Memory allocation failed for student array!\n");
+        free(new_cource);
+        return NULL;
+    }
+
+    // Input student details
+    for (int i = 0; i < new_cource->total_student; i++) {
+        printf("Enter details for student #%d:\n", i + 1);
+        student *new_student = create_student();
+        if (!new_student) {
+            printf("Failed to create student #%d\n", i + 1);
+            free(new_cource->studentArr);
+            free(new_cource);
+            return NULL;
+        }
+        new_cource->studentArr[i] = *new_student; // Copy student to array
+        free(new_student); // Free temporary student memory
+    }
+
+    // Calculate the average grade
+    float total_grade = 0;
+    for (int i = 0; i < new_cource->total_student; i++) {
+        total_grade += new_cource->studentArr[i].grade;
+    }
+    new_cource->average_grade = total_grade / new_cource->total_student;
+
+    return new_cource;
+}
+
+// Function to create a new school
+school *create_school() {
+    // Allocate memory for the school
+    school *new_school = (school *)malloc(sizeof(school));
+    if (!new_school) {
+        printf("Memory allocation failed for school!\n");
+        return NULL;
+    }
+
+    // Input school details
+    printf("Enter the school name: ");
+    scanf("%s", new_school->name);
+
+    printf("Enter the number of courses offered by the school: ");
+    scanf("%d", &new_school->total_cource);
+
+    // Allocate memory for course array
+    new_school->cource_array = (cource *)malloc(sizeof(cource) * new_school->total_cource);
+    if (!new_school->cource_array) {
+        printf("Memory allocation failed for course array!\n");
+        free(new_school);
+        return NULL;
+    }
+
+    // Input course details
+    for (int i = 0; i < new_school->total_cource; i++) {
+        printf("Enter details for course #%d:\n", i + 1);
+        cource *new_cource = create_cource();
+        if (!new_cource) {
+            printf("Failed to create course #%d\n", i + 1);
+            free(new_school->cource_array);
+            free(new_school);
+            return NULL;
+        }
+        new_school->cource_array[i] = *new_cource; // Copy course to array
+        free(new_cource); // Free temporary course memory
+    }
+
+    return new_school;
+}
+
+// Function to print student details
+void print_student_details(student *student) {
+    printf("Student Name: %s\n", student->name);
+    printf("Student ID: %d\n", student->id);
+    printf("Student Grade: %d\n", student->grade);
+}
+
+// Function to print course details
+void print_cource_details(cource *cource) {
+    printf("Course Name: %s\n", cource->name);
+    printf("Average Grade: %.2f\n", cource->average_grade);
+    printf("Total Students: %d\n", cource->total_student);
+
+    for (int i = 0; i < cource->total_student; i++) {
+        printf("Details of Student #%d:\n", i + 1);
+        print_student_details(&(cource->studentArr[i]));
+    }
+}
+
+// Function to print school details
+void print_school_details(school *school) {
+    printf("School Name: %s\n", school->name);
+    printf("Total Courses: %d\n", school->total_cource);
+
+    for (int i = 0; i < school->total_cource; i++) {
+        printf("Details of Course #%d:\n", i + 1);
+        print_cource_details(&(school->cource_array[i]));
+    }
+}
+
+
+
+void update_student_grade(Course *Course,int StudentID,int newgrade)
+{
+    
+    
+    for(int i=0;i<Course->total_student;i++)
+    {
+        if(Cource->studentArr[i].id==StudentID)
+        {
+            Cource->studentArr.grade=newgrade;
+            
+            return;
+        }
+        
+        
+    }
+    
+  printf("student was not found");  
+}
+
+
+
+// Main function
+int main() {
+    school *my_school = create_school();
+    if (!my_school) {
+        printf("Failed to create the school.\n");
+        return 1;
+    }
+
+    printf("School Details:\n");
+    print_school_details(my_school);
+    
+    print_cource_details(myschool,53);
+    
+
+    // Free dynamically allocated memory
+    for (int i = 0; i < my_school->total_cource; i++) {
+        free(my_school->cource_array[i].studentArr); // Free each course's student array
+    }
+    free(my_school->cource_array); // Free course array
+    free(my_school); // Free school
+
+    return 0;
+}
+
+
+
